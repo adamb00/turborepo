@@ -111,7 +111,7 @@ pnpm dev:with-db
 pnpm run bootstrap    # teljes init: env-ek + auth kulcsok + install + db setup+migrate
 pnpm run setup        # install + env fájlok létrehozása + db/redis/maildev start
 pnpm run dev          # összes app dev módban (turbo)
-pnpm run dev:with-db  # dev setup (db + migrate + runtime package build) + Prisma Studio + dev
+pnpm run dev:with-db  # approve-builds + dev setup (db + migrate + runtime package build) + Prisma Studio + dev
 pnpm run verify       # lint + typecheck + build
 pnpm run db:up        # db/redis/maildev start
 pnpm run db:down      # db/redis/maildev stop

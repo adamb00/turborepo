@@ -44,6 +44,9 @@ if [ "${STUDIO_PORT}" != "${DEFAULT_STUDIO_PORT}" ]; then
   echo "Port ${DEFAULT_STUDIO_PORT} is busy, using Prisma Studio port ${STUDIO_PORT}."
 fi
 
+echo "Approving pending package build scripts..."
+pnpm approve-builds --all
+
 pnpm run dev:setup
 
 echo "Starting Prisma Studio on http://localhost:${STUDIO_PORT} ..."

@@ -15,16 +15,17 @@ API_URL="http://localhost:${API_PORT}"
 
 generate_secret() {
   if command -v openssl >/dev/null 2>&1; then
-    openssl rand -hex 32
+    openssl rand -base64 32
     return
   fi
 
-  node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+  node -e "console.log(require('node:crypto').randomBytes(32).toString('base64'))"
 }
 
 AUTH_SECRET="$(generate_secret)"
 GOOGLE_AUTH_ID="${PROJECT_NAME}-google-client-id"
 GOOGLE_AUTH_SECRET="$(generate_secret)"
+ADMIN_AUTH_SECRET="$(generate_secret)"
 
 echo "Writing environment files for project: ${PROJECT_NAME}"
 
@@ -75,6 +76,7 @@ API_URL=${API_URL}
 NEXT_PUBLIC_API_URL=${API_URL}
 AUTH_GOOGLE_ID=${GOOGLE_AUTH_ID}
 AUTH_GOOGLE_SECRET=${GOOGLE_AUTH_SECRET}
+AUTH_SECRET=${ADMIN_AUTH_SECRET}
 DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public
 POSTGRES_USER=${DB_USER}
 POSTGRES_PASSWORD=${DB_PASSWORD}
