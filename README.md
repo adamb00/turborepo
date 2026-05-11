@@ -11,14 +11,15 @@ Monorepo alkalmazás `admin` (Next.js), `api` (NestJS) és közös `packages/*` 
 ## Environment fájlok
 
 Ez a repo környezetenként külön env fájlokat vár.
+`pnpm run bootstrap` automatikusan létrehozza ezeket, és a DB értékeket a projekt mappanevéből állítja:
+`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` = `<folder-name>`.
 
 ### 1) Root szint (`/`)
 
 Ide kerüljenek a Docker/dev stack és közös DB kapcsolati változók.
 
 - `.env.example` (template)
-- `.env.local` (saját, gitignore)
-- `.env.development` (opcionális, gitignore)
+- `.env.development` (saját, gitignore)
 - `.env.production` (opcionális, gitignore)
 
 Szükséges változók:
@@ -35,8 +36,7 @@ Szükséges változók:
 Ide kerüljenek az API-specifikus változók.
 
 - `apps/api/.env.example` (template)
-- `apps/api/.env.local` (saját, gitignore)
-- `apps/api/.env.development` (opcionális, gitignore)
+- `apps/api/.env.development` (saját, gitignore)
 - `apps/api/.env.production` (opcionális, gitignore)
 
 Szükséges változók:
@@ -56,8 +56,8 @@ Szükséges változók:
 Ide kerüljenek az admin frontend változói.
 
 - `apps/admin/.env.example` (template)
-- `apps/admin/.env.local` (saját, gitignore)
-- `apps/admin/.env.development` (opcionális, gitignore)
+- `apps/admin/.env.local` (saját, gitignore, Next.js)
+- `apps/admin/.env.development` (opcionális)
 - `apps/admin/.env.production` (opcionális, gitignore)
 
 Szükséges változók:
@@ -70,8 +70,7 @@ Szükséges változók:
 Jelenleg env-et használó package:
 
 - `packages/database/.env.example` (template)
-- `packages/database/.env.local` (saját, gitignore)
-- `packages/database/.env.development` (opcionális, gitignore)
+- `packages/database/.env.development` (saját, gitignore)
 - `packages/database/.env.production` (opcionális, gitignore)
 
 Szükséges változók (`packages/database`):
@@ -87,7 +86,7 @@ Szükséges változók (`packages/database`):
 ## Gyors indulás (dev)
 
 ```bash
-pnpm run setup
+pnpm run bootstrap
 pnpm dev:with-db
 ```
 
@@ -103,6 +102,7 @@ pnpm dev:with-db
 ## Common Commands
 
 ```bash
+pnpm run bootstrap    # teljes init: env-ek generálása + AUTH_SECRET + install + db setup+migrate
 pnpm run setup        # install + env fájlok létrehozása + db/redis/maildev start
 pnpm run dev          # összes app dev módban (turbo)
 pnpm run dev:with-db  # dev setup + Prisma Studio + dev
@@ -115,8 +115,9 @@ pnpm run db:migrate:dev
 ## Template Usage
 
 1. Használd a repót GitHub template-ként vagy klónozd.
-2. Futtasd: `pnpm run setup`.
-3. Ellenőrizd/env finomítsd a létrejött `.env.local` fájlokat.
+2. Futtasd: `pnpm run bootstrap`.
+3. Ellenőrizd/env finomítsd a létrejött env fájlokat:
+`/.env.development`, `apps/api/.env.development`, `packages/database/.env.development`, `apps/admin/.env.local`.
 4. Indítsd a fejlesztést: `pnpm run dev:with-db`.
 5. PR előtt ellenőrzés: `pnpm run verify`.
 

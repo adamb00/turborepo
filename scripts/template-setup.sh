@@ -23,11 +23,11 @@ copy_if_missing() {
 echo "Installing dependencies..."
 pnpm install
 
-echo "Creating local env files from examples..."
-copy_if_missing ".env.example" ".env.local"
-copy_if_missing "apps/api/.env.example" "apps/api/.env.local"
+echo "Creating development env files from examples..."
+copy_if_missing ".env.example" ".env.development"
+copy_if_missing "apps/api/.env.example" "apps/api/.env.development"
 copy_if_missing "apps/admin/.env.example" "apps/admin/.env.local"
-copy_if_missing "packages/database/.env.example" "packages/database/.env.local"
+copy_if_missing "packages/database/.env.example" "packages/database/.env.development"
 
 echo "Starting local infrastructure (db, redis, maildev)..."
 pnpm run db:up

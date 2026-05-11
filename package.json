@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "bootstrap": "bash scripts/bootstrap.sh",
     "db:down": "docker compose -f docker-compose.dev.yaml down",
     "db:logs": "docker compose -f docker-compose.dev.yaml logs -f db",
     "db:migrate:deploy": "turbo run db:migrate:deploy",

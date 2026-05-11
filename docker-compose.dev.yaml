@@ -8,8 +8,8 @@ services:
     image: postgres:15
     restart: always
     environment:
-      - POSTGRES_USER=${POSTGRES_USER:-adam}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-F.418w6er}
+      - POSTGRES_USER=${POSTGRES_USER:-app_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-change_me}
       - POSTGRES_DB=${POSTGRES_DB:-app_db}
     ports:
       - "${POSTGRES_HOST_PORT:-5433}:5432"
@@ -17,7 +17,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "pg_isready -U ${POSTGRES_USER:-adam} -d ${POSTGRES_DB:-app_db}",
+          "pg_isready -U ${POSTGRES_USER:-app_user} -d ${POSTGRES_DB:-app_db}",
         ]
       interval: 5s
       timeout: 5s
@@ -63,7 +63,7 @@ services:
     environment:
       NODE_ENV: development
       PORT: 8000
-      DATABASE_URL: postgresql://${POSTGRES_USER:-adam}:${POSTGRES_PASSWORD:-F.418w6er}@db:5432/${POSTGRES_DB:-app_db}?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-app_user}:${POSTGRES_PASSWORD:-change_me}@db:5432/${POSTGRES_DB:-app_db}?schema=public
       REDIS_URL: redis://redis:6379
       NEXT_PUBLIC_API_URL: http://localhost:8000
     volumes:
