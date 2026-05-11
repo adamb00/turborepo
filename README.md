@@ -13,6 +13,7 @@ Monorepo alkalmazás `admin` (Next.js), `api` (NestJS) és közös `packages/*` 
 Ez a repo környezetenként külön env fájlokat vár.
 `pnpm run bootstrap` automatikusan létrehozza ezeket, és a DB értékeket a projekt mappanevéből állítja:
 `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` = `<folder-name>`.
+Docker parancsok (`db:up/down/reset/logs`) explicit a root `/.env.development` fájlt használják.
 
 ### 1) Root szint (`/`)
 
