@@ -68,15 +68,17 @@ POSTGRES_HOST_PORT=${DB_PORT}
 POSTGRES_DB=${DB_NAME}
 EOF
 
-if [ ! -f apps/admin/.env.local ]; then
-  cat > apps/admin/.env.local <<EOF
+cat > apps/admin/.env.local <<EOF
 API_URL=${API_URL}
 NEXT_PUBLIC_API_URL=${API_URL}
+DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public
+POSTGRES_USER=${DB_USER}
+POSTGRES_PASSWORD=${DB_PASSWORD}
+POSTGRES_HOST=${DB_HOST}
+POSTGRES_HOST_PORT=${DB_PORT}
+POSTGRES_DB=${DB_NAME}
 EOF
-  echo "Created apps/admin/.env.local"
-else
-  echo "Kept existing apps/admin/.env.local"
-fi
+echo "Wrote apps/admin/.env.local"
 
 echo "Installing dependencies..."
 pnpm install

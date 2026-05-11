@@ -12,12 +12,39 @@ const moduleDir =
     : dirname(fileURLToPath(import.meta.url))
 const envName = process.env.NODE_ENV ?? "development"
 
+const findWorkspaceEnvCandidates = (startDir: string) => {
+  const candidates: string[] = []
+  let current = resolve(startDir)
+  const root = resolve("/")
+
+  while (true) {
+    candidates.push(resolve(current, `packages/database/.env.${envName}`))
+    candidates.push(resolve(current, "packages/database/.env"))
+    candidates.push(resolve(current, `.env.${envName}`))
+    candidates.push(resolve(current, ".env.local"))
+    candidates.push(resolve(current, ".env"))
+
+    if (current === root) {
+      break
+    }
+
+    const parent = resolve(current, "..")
+    if (parent === current) {
+      break
+    }
+    current = parent
+  }
+
+  return candidates
+}
+
 const envCandidates = [
   resolve(moduleDir, `../.env.${envName}`),
   resolve(moduleDir, "../.env"),
   resolve(process.cwd(), `.env.${envName}`),
   resolve(process.cwd(), ".env.local"),
   resolve(process.cwd(), ".env"),
+  ...findWorkspaceEnvCandidates(process.cwd()),
 ]
 
 for (const envPath of envCandidates) {
