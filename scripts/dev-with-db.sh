@@ -2,9 +2,47 @@
 
 set -euo pipefail
 
-STUDIO_PORT="${PRISMA_STUDIO_PORT:-5555}"
+DEFAULT_STUDIO_PORT="${PRISMA_STUDIO_PORT:-5555}"
+STUDIO_PORT="${DEFAULT_STUDIO_PORT}"
 STUDIO_BROWSER="${PRISMA_STUDIO_BROWSER:-none}"
 STUDIO_LOG="${PRISMA_STUDIO_LOG:-/tmp/prisma-studio.log}"
+
+is_port_in_use() {
+  local port="$1"
+  if command -v lsof >/dev/null 2>&1; then
+    lsof -nP -iTCP:"${port}" -sTCP:LISTEN >/dev/null 2>&1
+    return $?
+  fi
+
+  if command -v nc >/dev/null 2>&1; then
+    nc -z localhost "${port}" >/dev/null 2>&1
+    return $?
+  fi
+
+  return 1
+}
+
+pick_studio_port() {
+  local port="${DEFAULT_STUDIO_PORT}"
+  local max_tries=30
+  local i=0
+
+  while [ "${i}" -lt "${max_tries}" ]; do
+    if ! is_port_in_use "${port}"; then
+      echo "${port}"
+      return 0
+    fi
+    port=$((port + 1))
+    i=$((i + 1))
+  done
+
+  echo "${DEFAULT_STUDIO_PORT}"
+}
+
+STUDIO_PORT="$(pick_studio_port)"
+if [ "${STUDIO_PORT}" != "${DEFAULT_STUDIO_PORT}" ]; then
+  echo "Port ${DEFAULT_STUDIO_PORT} is busy, using Prisma Studio port ${STUDIO_PORT}."
+fi
 
 pnpm run dev:setup
 
