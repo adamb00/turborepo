@@ -37,5 +37,22 @@
   "packageManager": "pnpm@10.33.2",
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/engines",
+      "esbuild",
+      "msgpackr-extract",
+      "msw",
+      "sharp",
+      "unrs-resolver"
+    ],
+    "peerDependencyRules": {
+      "allowAny": [
+        "postcss",
+        "nodemailer",
+        "chokidar"
+      ]
+    }
   }
 }

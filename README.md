@@ -15,6 +15,7 @@ Ez a repo környezetenként külön env fájlokat vár.
 `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` = `<folder-name>`.
 Ugyanez a parancs a root `package.json` `name` mezőjét is a mappanévre állítja.
 `bootstrap` az env fájlokat újragenerálja (felülírja), hogy mindig konzisztens legyen a teljes stack.
+Google auth kulcsokhoz fejlesztői placeholder értékeket generál; éles Google loginhoz ezeket valódi OAuth értékre kell cserélni.
 Docker parancsok (`db:up/down/reset/logs`) explicit a root `/.env.development` fájlt használják.
 
 ### 1) Root szint (`/`)
@@ -67,6 +68,8 @@ Szükséges változók:
 
 - `API_URL` (pl. `http://localhost:8000`)
 - `NEXT_PUBLIC_API_URL` (kliens oldali használathoz, ha szükséges)
+- `AUTH_GOOGLE_ID`
+- `AUTH_GOOGLE_SECRET`
 
 ### 4) Packages (`packages/*`)
 
@@ -105,7 +108,7 @@ pnpm dev:with-db
 ## Common Commands
 
 ```bash
-pnpm run bootstrap    # teljes init: env-ek generálása + AUTH_SECRET + install + db setup+migrate
+pnpm run bootstrap    # teljes init: env-ek + auth kulcsok + install + db setup+migrate
 pnpm run setup        # install + env fájlok létrehozása + db/redis/maildev start
 pnpm run dev          # összes app dev módban (turbo)
 pnpm run dev:with-db  # dev setup (db + migrate + runtime package build) + Prisma Studio + dev
