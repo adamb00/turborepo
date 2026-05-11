@@ -26,6 +26,15 @@ AUTH_SECRET="$(generate_secret)"
 
 echo "Writing environment files for project: ${PROJECT_NAME}"
 
+node -e '
+const fs = require("node:fs");
+const path = "package.json";
+const pkg = JSON.parse(fs.readFileSync(path, "utf8"));
+pkg.name = process.argv[1];
+fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
+' "$PROJECT_NAME"
+echo "Updated package.json name to: ${PROJECT_NAME}"
+
 cat > .env.development <<EOF
 POSTGRES_USER=${DB_USER}
 POSTGRES_PASSWORD=${DB_PASSWORD}
