@@ -37,6 +37,12 @@ migrate_deploy_with_retry() {
   return 1
 }
 
+build_runtime_packages() {
+  echo "Building runtime workspace packages..."
+  pnpm --filter @workspace/database build
+  pnpm --filter @workspace/validation build
+}
+
 echo "Starting development infrastructure (Postgres + Redis)..."
 pnpm run db:up
 
@@ -47,8 +53,7 @@ migrate_status=$?
 set -e
 
 if [ "$migrate_status" -eq 0 ]; then
-  echo "Building @workspace/database package..."
-  pnpm --filter @workspace/database build
+  build_runtime_packages
   echo "Development database is ready."
   exit 0
 fi
@@ -58,8 +63,7 @@ if [ "$migrate_status" -eq 10 ] || [ "$migrate_status" -eq 11 ]; then
   pnpm run db:reset
   pnpm run db:up
   migrate_deploy_with_retry
-  echo "Building @workspace/database package..."
-  pnpm --filter @workspace/database build
+  build_runtime_packages
   echo "Development database was reset and is now ready."
   exit 0
 fi
