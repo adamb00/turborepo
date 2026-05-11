@@ -103,7 +103,7 @@ echo "Wrote apps/admin/.env.local"
 echo "Installing dependencies..."
 pnpm install
 
-shut_down_prisma_studio()
+shut_down_prisma_studio
 
 echo "Starting development setup (db + redis + migrations)..."
 pnpm run dev:setup
