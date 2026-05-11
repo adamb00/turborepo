@@ -22,6 +22,20 @@ generate_secret() {
   node -e "console.log(require('node:crypto').randomBytes(32).toString('base64'))"
 }
 
+shut_down_prisma_studio() {
+  if ! command -v lsof >/dev/null 2>&1; then
+    return 0
+  fi
+
+  for port in {5555..5565}; do
+    PID="$(lsof -t -i:"$port" -sTCP:LISTEN 2>/dev/null || true)"
+    if [ -n "$PID" ]; then
+      echo "Shutting down Prisma Studio on port $port (PID: $PID)"
+      kill "$PID" 2>/dev/null || true
+    fi
+  done
+}
+
 AUTH_SECRET="$(generate_secret)"
 GOOGLE_AUTH_ID="${PROJECT_NAME}-google-client-id"
 GOOGLE_AUTH_SECRET="$(generate_secret)"
@@ -57,7 +71,7 @@ AUTH_SECRET=${AUTH_SECRET}
 REDIS_URL=redis://${DB_HOST}:${REDIS_PORT}
 DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?schema=public
 SMTP_HOST=${DB_HOST}
-SMTP_PORT=1025
+SMTP_PORT=8025
 EMAIL_FROM=no-reply@${PROJECT_NAME}.local
 EOF
 
@@ -88,6 +102,8 @@ echo "Wrote apps/admin/.env.local"
 
 echo "Installing dependencies..."
 pnpm install
+
+shut_down_prisma_studio()
 
 echo "Starting development setup (db + redis + migrations)..."
 pnpm run dev:setup
