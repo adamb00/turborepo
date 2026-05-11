@@ -1,0 +1,28 @@
+{
+  "name": "@workspace/auth",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "next-auth": "5.0.0-beta.31",
+    "@auth/prisma-adapter": "^2.11.2"
+  },
+  "devDependencies": {
+    "@workspace/eslint-config": "workspace:*",
+    "@workspace/typescript-config": "workspace:*",
+    "@workspace/validation": "workspace:*",
+    "@workspace/database": "workspace:*",
+    "eslint": "^10.2.1",
+    "typescript": "^6.0.3",
+    "bcryptjs": "^3.0.3"
+  },
+  "exports": {
+    ".": "./auth.ts",
+    "./types": "./types/index.d.ts"
+  }
+}

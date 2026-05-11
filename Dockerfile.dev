@@ -1,0 +1,15 @@
+FROM node:20-bookworm-slim
+
+WORKDIR /workspace
+
+RUN corepack enable
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
+COPY apps ./apps
+COPY packages ./packages
+
+RUN pnpm install --frozen-lockfile
+
+EXPOSE 3000 8000
+
+CMD ["sh", "-lc", "pnpm --filter @workspace/database generate && pnpm --filter @workspace/database db:push && pnpm dev"]

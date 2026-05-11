@@ -1,0 +1,81 @@
+volumes:
+  postgres_data:
+    driver: local
+
+services:
+  db:
+    platform: linux/amd64
+    image: postgres:15
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-adam}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-F.418w6er}
+      - POSTGRES_DB=${POSTGRES_DB:-app_db}
+    ports:
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-adam} -d ${POSTGRES_DB:-app_db}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "${REDIS_HOST_PORT:-6380}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  maildev:
+    image: maildev/maildev
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      - MAILDEV_WEB_PORT=1080
+      - MAILDEV_SMTP_PORT=1025
+    ports:
+      - "8080:1080"
+      - "8025:1025"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1m"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      PORT: 8000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-adam}:${POSTGRES_PASSWORD:-F.418w6er}@db:5432/${POSTGRES_DB:-app_db}?schema=public
+      REDIS_URL: redis://redis:6379
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    volumes:
+      - .:/workspace
+      - /workspace/node_modules
+    command: >
+      sh -lc "
+      pnpm install --frozen-lockfile &&
+      pnpm --filter @workspace/database generate &&
+      pnpm --filter @workspace/database db:push &&
+      pnpm dev
+      "
+    ports:
+      - "3000:3000"
+      - "8000:8000"
